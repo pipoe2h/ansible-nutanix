@@ -1,0 +1,69 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{% set workers = karbon_worker_instances %}
+{% set ns = namespace(karbon_template_uuid=false,karbon_node_image=false,karbon_vm_network_uuid=false,karbon_pe_cluster_uuid=false) %}
+{% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/images/list' %}
+  {% for entity in entities.api_response.entities if entity.spec.name == karbon_k8s_template_name %}
+    {% set ns.karbon_template_uuid = entity.metadata.uuid %}
+    {% if karbon_k8s_template_name == 'acs-centos' %}
+      {% set ns.karbon_node_image = 'centos' %}
+    {% else %}
+      {% set ns.karbon_node_image = 'ubuntu' %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+{% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/subnets/list' %}
+  {% for entity in entities.api_response.entities if entity.spec.name == pe_network_name %}
+    {% set ns.karbon_vm_network_uuid = entity.metadata.uuid %}
+  {% endfor %}
+{% endfor %}
+{% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/groups' %}
+  {% for group in entities.api_response.group_results %}
+    {% for cluster in group.entity_results[0].data[0]['values'] if cluster['values'][0] == pe_cluster_name %}
+      {% set ns.karbon_pe_cluster_uuid = group.entity_results[0].entity_id %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+{# --------------------K8S JSON CLUSTER TEMPLATE BELOW-------------------- #}
+name: '{{ karbon_k8s_cluster_name }}'
+description: '{{ karbon_k8s_cluster_description }}'
+vm_network: '{{ ns.karbon_vm_network_uuid }}'
+k8s_config:
+  service_cluster_ip_range: '{{ karbon_k8s_service_cidr }}'
+  network_cidr: '{{ karbon_k8s_pod_cidr }}'
+  fqdn: '{{ karbon_k8s_api_fqdn }}'
+  workers:
+{% for number in range(workers) %}
+  - cpu: {{ karbon_worker_cpu }}
+    memory_mib: {{ karbon_worker_memory }}
+    image: '{{ ns.karbon_template_uuid }}'
+    disk_mib: {{ karbon_worker_disk }}
+{% endfor %}
+  masters:
+  - cpu: {{ karbon_master_cpu }}
+    memory_mib: {{ karbon_master_memory }}
+    image: '{{ ns.karbon_template_uuid }}'
+    disk_mib: {{ karbon_master_disk }}
+  os_flavor: '{{ ns.karbon_node_image }}'
+  network_subnet_len: 24
+  version: '{{ karbon_k8s_version }}'
+cluster_ref: '{{ ns.karbon_pe_cluster_uuid }}'
+logging_config:
+  enable_app_logging: false
+storage_class_config:
+  metadata:
+    name: default-storageclass
+  spec:
+    cluster_ref: '{{ ns.karbon_pe_cluster_uuid }}'
+    user: '{{ pc_username }}'
+    password: '{{ pc_password }}'
+    storage_container: '{{ pe_storagecontainer_name }}'
+    file_system: ext4
+    flash_mode: false
+etcd_config:
+  num_instances: {{ karbon_etcd_instances }}
+  name: '{{ karbon_k8s_cluster_name }}'
+  resource_config:
+    cpu: {{ karbon_etcd_cpu }}
+    memory_mib: {{ karbon_etcd_memory }}
+    image: '{{ ns.karbon_template_uuid }}'
+    disk_mib: {{ karbon_etcd_disk }}

@@ -1,0 +1,7 @@
+- name: Karbon batch
+  hosts: all
+  gather_facts: no
+  connection: local
+  roles:
+    - ../pipoe2h.ntnx_pc-login
+    - ../pipoe2h.ntnx_karbon-batch

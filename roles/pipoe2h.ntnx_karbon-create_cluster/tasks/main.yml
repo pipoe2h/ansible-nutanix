@@ -1,0 +1,15 @@
+---
+- name: Create Kubernetes cluster 
+  uri:
+    url: https://{{ inventory_hostname }}:7050/acs/k8s/cluster
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+      Cookie: "{{ login.set_cookie }}"
+    validate_certs: no
+    return_content: yes
+    status_code: 202
+    body_format: json
+    body: "{{ lookup('template','pipoe2h.ntnx_karbon-create_cluster.j2') | from_yaml }}"
+  register: task

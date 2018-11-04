@@ -1,0 +1,28 @@
+---
+pe_cluster_name: 
+pe_storagecontainer_name: 
+pe_network_name: 
+
+karbon_k8s_cluster_name: 
+karbon_k8s_cluster_description: 
+karbon_k8s_template_name: acs-centos # acs-centos or acs-ubuntu
+karbon_k8s_version:  # v1.8.13, v1.9.6 or v1.10.3
+karbon_k8s_service_cidr: 172.19.0.0/16
+karbon_k8s_pod_cidr: 172.20.0.0/16
+karbon_k8s_api_fqdn: ''
+
+karbon_etcd_instances: 1 # 1, 3 or 5
+karbon_etcd_cpu: 2 # Minimum 2
+karbon_etcd_memory: 8192 # Minimum 8192
+karbon_etcd_disk: 40960
+
+karbon_master_cpu: 2 # Minimum 2
+karbon_master_memory: 4096 # Minimum 4096
+karbon_master_disk: 122880
+
+karbon_worker_instances: 1 # 1 or more
+karbon_worker_cpu: 4 # Minimum 2
+karbon_worker_memory: 8192 # Minimum 4096
+karbon_worker_disk: 122880
+
+

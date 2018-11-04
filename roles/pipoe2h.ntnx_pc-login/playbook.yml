@@ -1,0 +1,6 @@
+- name: PC Authentication
+  hosts: super-nuc
+  gather_facts: no
+  connection: local
+  roles:
+    - ../pipoe2h.ntnx_pc-login

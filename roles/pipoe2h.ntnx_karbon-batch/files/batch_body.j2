@@ -1,0 +1,25 @@
+action_on_failure: CONTINUE
+execution_order: SEQUENTIAL
+api_request_list:
+- operation: POST
+  path_and_params: "/api/nutanix/v3/images/list"
+  body:
+    filter: name==[a|A][c|C][s|S]-.*
+- operation: POST
+  path_and_params: "/api/nutanix/v3/groups"
+  body:
+    entity_type: cluster
+    grouping_attribute: ''
+    group_offset: 0
+    group_attributes: []
+    group_member_offset: 0
+    group_member_sort_attribute: cluster_name
+    group_member_sort_order: ASCENDING
+    group_member_attributes:
+    - attribute: cluster_name
+    - attribute: hypervisor_types
+- operation: POST
+  path_and_params: "/api/nutanix/v3/subnets/list"
+  body:
+    kind: subnet
+api_version: '3.0'

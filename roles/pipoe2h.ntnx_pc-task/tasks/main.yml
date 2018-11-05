@@ -15,5 +15,5 @@
     body_format: json
   register: task_details
   until: task_details|json_query('json.status')|default(0) =='SUCCEEDED'
-  retries: 180
+  retries: 360
   delay: 5

@@ -7,3 +7,4 @@
     - ../pipoe2h.ntnx_karbon-batch
     - ../pipoe2h.ntnx_karbon-create_cluster
     - ../pipoe2h.ntnx_pc-task
+    - ../pipoe2h.ntnx_karbon-get_kubeconfig

@@ -1,0 +1,6 @@
+- name: Get Kubeconfig
+  hosts: all
+  gather_facts: no
+  connection: local
+  roles:
+    - ../pipoe2h.ntnx_karbon-get_kubeconfig

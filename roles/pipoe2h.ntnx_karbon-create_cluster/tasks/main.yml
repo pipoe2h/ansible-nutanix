@@ -13,3 +13,6 @@
     body_format: json
     body: "{{ lookup('template','pipoe2h.ntnx_karbon-create_cluster.j2') | from_yaml }}"
   register: task
+
+- set_fact:
+    karbon_cluster_uuid: "{{ task.json.cluster_uuid }}"

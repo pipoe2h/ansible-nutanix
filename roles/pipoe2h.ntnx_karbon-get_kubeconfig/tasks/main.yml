@@ -1,0 +1,23 @@
+---
+- name: Create directory ~/.kube 
+  file:
+    path: /home/centos/.kube
+    state: directory
+
+- name: Download Kubeconfig
+  uri:
+    url: https://{{ inventory_hostname }}:7050/acs/k8s/cluster/{{ karbon_cluster_uuid }}/kubeconfig
+    method: GET
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+      Cookie: "{{ login.set_cookie }}"
+    validate_certs: no
+    return_content: yes
+    body_format: form-urlencoded
+  register: result
+
+- name: Decode to Kubeconfig
+  copy:
+    dest: /home/centos/.kube/config
+    content: "{{ result.json.yml_config | b64decode }}"

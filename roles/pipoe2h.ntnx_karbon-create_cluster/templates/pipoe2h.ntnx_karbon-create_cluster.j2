@@ -16,10 +16,21 @@
     {% set ns.karbon_vm_network_uuid = entity.metadata.uuid %}
   {% endfor %}
 {% endfor %}
+{#
 {% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/groups' %}
   {% for group in entities.api_response.group_results %}
     {% for cluster in group.entity_results[0].data[0]['values'] if cluster['values'][0] == pe_cluster_name %}
       {% set ns.karbon_pe_cluster_uuid = group.entity_results[0].entity_id %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+#}
+{% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/groups' %}
+  {% for group in entities.api_response.group_results %}
+    {% for result in group.entity_results %}
+      {% for cluster in result.data[0]['values'] if cluster['values'][0] == pe_cluster_name %}
+        {% set ns.karbon_pe_cluster_uuid = result.entity_id %}
+      {% endfor %}
     {% endfor %}
   {% endfor %}
 {% endfor %}

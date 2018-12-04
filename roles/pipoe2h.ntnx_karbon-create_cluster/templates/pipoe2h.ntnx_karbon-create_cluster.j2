@@ -12,7 +12,7 @@
   {% endfor %}
 {% endfor %}
 {% for entities in karbon_batch.json.api_response_list if entities.path_and_params == '/api/nutanix/v3/subnets/list' %}
-  {% for entity in entities.api_response.entities if entity.spec.name == pe_network_name %}
+  {% for entity in entities.api_response.entities if entity.spec.name == pe_network_name and entity.spec.cluster_reference.name == pe_cluster_name %}
     {% set ns.karbon_vm_network_uuid = entity.metadata.uuid %}
   {% endfor %}
 {% endfor %}
